@@ -12,8 +12,9 @@ fasta_machine = (function ()
     newline     = re"\r?" * lf
     identifier  = re"[!-~]*"
     description = re"[!-~][ -~]*"
-    letters     = re"[A-Za-z*-]*"
-    sequence    = re.cat(letters, re.rep(newline * letters))
+    letters1     = re"[A-Za-z*-]+"
+    letters2     = re"[A-Za-z*-]*"
+    sequence    = re.cat(letters1, re.rep(newline * letters2))
     record      = re.cat('>', identifier, re.opt(re" " * description), newline, sequence)
     fasta       = re.rep(record)
 
@@ -23,8 +24,10 @@ fasta_machine = (function ()
     identifier.actions[:exit]   = [:identifier]
     description.actions[:enter] = [:mark]
     description.actions[:exit]  = [:description]
-    letters.actions[:enter]     = [:mark]
-    letters.actions[:exit]      = [:letters]
+    letters1.actions[:enter]     = [:mark]
+    letters1.actions[:exit]      = [:letters]
+    letters2.actions[:enter]     = [:mark]
+    letters2.actions[:exit]      = [:letters]
     record.actions[:exit]       = [:record]
 
     # Finally, compile the final FASTA pattern into a state machine.
